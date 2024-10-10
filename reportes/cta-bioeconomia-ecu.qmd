@@ -50,7 +50,7 @@ citation:
   container-title: Manuscrito sin publicar.
   language: es
 appendix-cite-as: display
-funding: "The author received no specific funding for this work."
+funding: "Este trabajo ha sido financiado por FIAS."
 ---
 
 ## Introducción
