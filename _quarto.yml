@@ -1,0 +1,36 @@
+project:
+  type: website
+  output-dir: docs
+  execute-dir: project
+
+website:
+  title: "cta-bioeconomia-ECU"
+  repo-url: https://github.com/rvconsulting/armenia-ccdr/
+  issue-url: https://github.com/rvconsulting/armenia-ccdr/issues
+  repo-actions: [source]
+  repo-branch: master
+  navbar:
+    pinned: true
+    left:
+      - href: index.qmd
+        text: Home
+      - acerca.qmd
+  sidebar:
+    style: "docked"
+    search: true
+    contents:
+      - section: "Reportes"
+        contents: reportes/*
+      - section: "Material Suplementario"
+        contents: suplementario/*
+      # - section: "Dashboards"
+      #   contents: dashboards/*
+
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+    toc: true
+
+
+
