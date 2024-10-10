@@ -1,5 +1,65 @@
 ---
 title: "Cuenta Satélite de Bioeconomía de Ecuador"
-author: "Renato Vargas"
+lang: es
+date: 2008-02-29
+authors:
+  - name: Renato Vargas
+    affiliation:
+      - ref: chw
+    # email: renovargas@gmail.com
+    roles: writing
+    corresponding: true
+  - name: Andrés Mondaini
+    affiliation: 
+      - ref: eclac
+    # email: andres.mondaini@cepal.org
+  - name: Adrián Rodríguez
+    affiliation: 
+      - ref: eclac
+    # email: adrian.rodriguez@cepal.org
+affiliations:
+  - id: chw
+    name: CHW, S.A.
+  - id: eclac
+    name: Comisión Económica para América Latina y El Caribe (CEPAL)
+  - id: bccr
+    name: Banco Central de Costa Rica
+abstract: > 
+  Este documento describe la construcción de una cuenta satélite de 
+  bioeconomía para Ecuador, como un instrumento para la formulación 
+  y seguimiento de políticas públicas relacionadas con la bioeconomía. 
+  Además, se muestra una implementación piloto para el periodo 2007-2019, 
+  en la que se observa que los recursos biológicos representaron entre 
+  21.65 % y 23.95 % anual de los insumos necesarios para la producción en 
+  la economía ecuatoriana de manera directa. También se evidencia que los 
+  recursos biológicos   han pasado a representar de 28.92 % en 2007 a 48.70 % 
+  en 2019. También es importante notar que de los productos bioeconómicos 
+  se obtuvo entre 20.19 % y 33.62 % de la recaudación de impuestos a los 
+  productos durante el periodo.
+  
+  
+keywords:
+  - Bioeconomía
+  - Economía
+  - Sostenibilidad
+  - Cuentas Nacionales
+copyright: 
+  holder: Renato Vargas
+  year: 2024
+citation: 
+  container-title: Manuscrito sin publicar.
+  language: es
+appendix-cite-as: display
+funding: "The author received no specific funding for this work."
 ---
+
+## Introducción
+
+## Metodología
+
+## Resultados
+
+## Conclusiones
+
+## Referencias
 

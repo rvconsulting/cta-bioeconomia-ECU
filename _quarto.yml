@@ -4,9 +4,9 @@ project:
   execute-dir: project
 
 website:
-  title: "cta-bioeconomia-ECU"
+  title: "CSB Ecuador"
   repo-url: https://github.com/rvconsulting/cta-bioeconomia-ECU/
-  issue-url: https://github.com/rvconsulting/cta-bioeconomia-ECU/issues
+#  issue-url: https://github.com/rvconsulting/cta-bioeconomia-ECU/issues
   repo-actions: [source]
   repo-branch: master
   navbar:

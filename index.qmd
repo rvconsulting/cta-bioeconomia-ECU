@@ -1,5 +1,6 @@
 ---
 title: "Cuenta Satélite de Bioeconomía de Ecuador"
+lang: es
 ---
 
 
@@ -11,11 +12,13 @@ title: "Cuenta Satélite de Bioeconomía de Ecuador"
 #| fig-cap: "Ecuador"
 
 adm1 <- sf::read_sf("data/gis/ecu_adm_1.shp") |> 
-  dplyr::select(shapeISO, shapeName, geometry)
+  dplyr::select(shapeISO, shapeName, geometry) |> 
+  dplyr::filter(shapeISO != "EC-W") |> 
+  dplyr::mutate(map_label = paste0(shapeISO, " ", shapeName))
 
 tmap::tm_shape(adm1)+
-  tmap::tm_fill("shapeName", legend.show = TRUE, palette = "Set1") +
+  tmap::tm_fill("map_label", legend.show = TRUE, palette = "Set1", title = "Provincia") +
   tmap::tm_text("shapeISO", size = 0.65, auto.placement = T, col = "black")+
-  tmap::tm_layout(frame = F)
+  tmap::tm_layout(frame = T, legend.outside = T)
 ```
 
