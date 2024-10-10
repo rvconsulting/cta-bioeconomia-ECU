@@ -1,9 +1,5 @@
 ---
-title: "About"
+title: "Acerca"
 ---
 
-About this site
-
-```{r}
-1 + 1
-```
+Este sitio está construido para el informe final de la Cuenta Satélite de Bioeconomía de Ecuador.

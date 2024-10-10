@@ -5,8 +5,8 @@ project:
 
 website:
   title: "cta-bioeconomia-ECU"
-  repo-url: https://github.com/rvconsulting/armenia-ccdr/
-  issue-url: https://github.com/rvconsulting/armenia-ccdr/issues
+  repo-url: https://github.com/rvconsulting/cta-bioeconomia-ECU/
+  issue-url: https://github.com/rvconsulting/cta-bioeconomia-ECU/issues
   repo-actions: [source]
   repo-branch: master
   navbar:
@@ -22,13 +22,16 @@ website:
       - section: "Reportes"
         contents: reportes/*
       - section: "Material Suplementario"
-        contents: suplementario/*
+        contents: suplementarios/*
       # - section: "Dashboards"
       #   contents: dashboards/*
 
+editor_options: 
+  chunk_output_type: console
+  
 format:
   html:
-    theme: cosmo
+    theme: yeti
     css: styles.css
     toc: true
 
