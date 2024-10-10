@@ -1,7 +1,7 @@
 ---
 title: "Cuenta Satélite de Bioeconomía de Ecuador"
 lang: es
-date: 2008-02-29
+date: 2024-10-10
 authors:
   - name: Renato Vargas
     affiliation:
@@ -32,11 +32,24 @@ abstract: >
   en la que se observa que los recursos biológicos representaron entre 
   21.65 % y 23.95 % anual de los insumos necesarios para la producción en 
   la economía ecuatoriana de manera directa. También se evidencia que los 
-  recursos biológicos   han pasado a representar de 28.92 % en 2007 a 48.70 % 
-  en 2019. También es importante notar que de los productos bioeconómicos 
-  se obtuvo entre 20.19 % y 33.62 % de la recaudación de impuestos a los 
-  productos durante el periodo.
-  
+  recursos biológicos  han pasado de representar 28.92 % en 2007 a 48.70 % 
+  en 2019 de las exportaciones. También es importante notar que de los 
+  productos bioeconómicos se obtuvo entre 20.19 % y 33.62 % de la recaudación 
+  de impuestos a los productos durante el periodo analizado.
+format:
+  html:
+    toc: true
+    number-sections: true
+    number-depth: 3
+    highlight-style: github
+  docx:
+    toc: true
+    number-sections: true
+    highlight-style: arrow
+  pdf:
+    toc: true
+    number-sections: true
+    colorlinks: true  
   
 keywords:
   - Bioeconomía
