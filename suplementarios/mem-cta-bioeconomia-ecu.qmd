@@ -9,6 +9,8 @@ lang: es
 Primero llamamos las librerías necesarias.
 
 ```{r}
+#| warning: FALSE
+#| message: FALSE 
 #| label: libs
 
 library(tidyverse)
@@ -32,13 +34,14 @@ test <- csb_ECU |>
          & Valor > 0
          & Cuadro == "Utilización" 
          & Área.transaccional == "Producción / Consumo intermedio"
-         & Descripción.Actividades == "Fabricación de sustancias químicas básicas, abonos y plásticos primarios") |>
+         # & Descripción.Actividades == "Fabricación de sustancias químicas básicas, abonos y plásticos primarios"
+         ) |>
   group_by(Bioeconomía.Productos) |> 
   summarize(Valor = sum(Valor, na.rm = T)) |>
   arrange(Bioeconomía.Productos, desc(Valor)) |> 
   ungroup()
 
-test$percent <- (test$Valor / sum(test$Valor))* 100
+test$Porcentaje <- (test$Valor / sum(test$Valor))* 100
 
 test |> 
   gt()
