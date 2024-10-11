@@ -4,3 +4,44 @@ author: "Renato Vargas"
 lang: es
 ---
 
+## Datos
+
+Primero llamamos las librerías necesarias.
+
+```{r}
+#| label: libs
+
+library(tidyverse)
+library(gt)
+# library(duckdb)
+```
+
+Seguidamente, importamos los datos de la cuenta de Bioeconomía.
+
+```{r}
+csb_ECU <- read.csv(
+  "~/GitHub/cta-bioeconomia-ECU/data/legacy-bio-scn/csb-ECU.csv",
+  na.strings="-")
+```
+
+
+```{r}
+
+test <- csb_ECU |> 
+  filter(Año == 2019
+         & Valor > 0
+         & Cuadro == "Utilización" 
+         & Área.transaccional == "Producción / Consumo intermedio"
+         & Descripción.Actividades == "Fabricación de sustancias químicas básicas, abonos y plásticos primarios") |>
+  group_by(Bioeconomía.Productos) |> 
+  summarize(Valor = sum(Valor, na.rm = T)) |>
+  arrange(Bioeconomía.Productos, desc(Valor)) |> 
+  ungroup()
+
+test$percent <- (test$Valor / sum(test$Valor))* 100
+
+test |> 
+  gt()
+
+```
+
