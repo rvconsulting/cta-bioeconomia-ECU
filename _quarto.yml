@@ -26,8 +26,8 @@ website:
       # - section: "Dashboards"
       #   contents: dashboards/*
 
-editor_options: 
-  chunk_output_type: console
+# editor_options: 
+#   chunk_output_type: console
   
 format:
   html:
