@@ -46,10 +46,11 @@ format:
     toc: true
     number-sections: true
     highlight-style: arrow
-  pdf:
-    toc: true
-    number-sections: true
-    colorlinks: true  
+  # pdf:
+  #   prefer-html: true
+  #   toc: true
+  #   number-sections: true
+  #   colorlinks: true
   
 keywords:
   - Bioeconomía
@@ -66,13 +67,89 @@ appendix-cite-as: display
 funding: "Este trabajo ha sido financiado por FIAS."
 ---
 
+```{r}
+#| warning: false
+#| message: false 
+#| output: false
+#| echo: false
+#| label: libs
+
+library(tidyverse)
+library(gt)
+library(pivottabler)
+library(basictabler)
+```
+
+```{r}
+#| warning: false
+#| message: false 
+#| output: false
+#| echo: false
+#| label: datasets
+
+load("outputs/csb_ECU_factor.RData")
+```
+
 ## Introducción
+
+En esta sección se introduce el concepto de bioeconomía en función de los acuerdos internacionales y la Estrategia Nacional de Bioeconomía de Ecuador.
 
 ## Metodología
 
+En esta sección se hará referencia a los pasos seguidos para construir la cuenta de bioeconomía de Ecuador. Se hará énfasis en cómo se ha hecho un emparejamiento entre las clasificaciones internacionales de actividades económicas y de productos y 
+
 ## Resultados
+
+En esta sección se hará referencia a los hallazgos con una narrativa alrededor de:
+
+- El cuadro de oferta 2019.
+- El cuadro de utilización 2019.
+
+::: {html-table-processing="none"}
+
+```{r}
+#| warning: false
+#| message: false 
+#| echo: false
+#| label: tbl-csb-ecuador-compacta
+#| tbl-cap: Cuenta de Bioeconomía de Ecuador (Millones de dólares, año 2019)
+
+for_pivot <- as.data.frame(csb.ECU) |> 
+  filter(Año == 2019)
+
+library(pivottabler)
+
+pt <- PivotTable$new()
+pt$addData(for_pivot)
+pt$addColumnDataGroups("Área.transaccional.columnas.No.")
+pt$addColumnDataGroups("Área.transaccional", addTotal=FALSE)
+# pt$addColumnDataGroups("CIIU.Secciones", addTotal=FALSE)
+# pt$addColumnDataGroups("CIIU.Corto", addTotal=FALSE)
+pt$addRowDataGroups("No..Cuadro", addTotal=FALSE)
+pt$addRowDataGroups("Cuadro")
+pt$addRowDataGroups("Bioeconomía.Productos", totalCaption="Bioeconomía", addTotal=FALSE)
+pt$sortColumnDataGroups(levelNumber=2, orderBy="value")
+pt$sortRowDataGroups(levelNumber = 2, orderBy = "value")
+pt$defineCalculation(calculationName="Gran Total", summariseExpression="sum(Valor, na.rm=TRUE)", format=list(digits=1, nsmall=1, big.mark=",", decimal.mark=".", scientific=FALSE))
+pt$renderPivot()
+```
+
+:::
+
+- Evolución de la bioeconomía 2007-2019.
+- Exportaciones.
+- Importaciones.
+- Impuestos sobre los productos.
+- Tasa impositiva implícita.
+- Ranking de actividades bioeconómicas vía consumo intermedio.
+- Ranking de actividades bioeconómicas vía multiplicadores de insumos de la bioeconomía.
+- Profundización en sectores seleccionados basado en lo anterior.
 
 ## Conclusiones
 
+Atar los hallazgos de la cuenta de bioeconomía de Ecuador a los esfuerzos de la Estrategia Nacional y los hallazgos del libro Blanco.
+
 ## Referencias
+
+Referencias bibliográficas.
 

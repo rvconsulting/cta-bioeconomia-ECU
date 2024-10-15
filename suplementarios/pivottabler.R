@@ -2,27 +2,7 @@
 # Duck DB
 
 library(dplyr)
-library("duckdb")
 
-# Save the database to disc
-
-csb_ECU <- read.csv(
-  "data/legacy-bio-scn/csb-ECU.csv",
-  na.strings="-")
-
-# Let's use a database
-
-con <- dbConnect(duckdb(), dbdir = "outputs/csb_ecu.duckdb", read_only = FALSE)
-dbWriteTable(con, "csb_ECU", csb_ECU)
-dbDisconnect(con)
-
-# With strings as factors
-con <- dbConnect(duckdb(), dbdir = "outputs/csb_ecu_factor.duckdb", read_only = FALSE)
-dbWriteTable(con, "csb_ECU", csb.ECU)
-dbDisconnect(con)
-
-save(csb_ECU, file="outputs/csb_ECU.RData")
-save(csb.ECU, file="outputs/csb_ECU_factor.RData")
 
 load(file="outputs/csb_ECU_factor.RData")
 

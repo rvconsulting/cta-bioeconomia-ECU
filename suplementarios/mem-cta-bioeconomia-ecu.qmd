@@ -15,21 +15,24 @@ Primero llamamos las librerías necesarias.
 
 library(tidyverse)
 library(gt)
+library(pivottabler)
 # library(duckdb)
 ```
 
 Seguidamente, importamos los datos de la cuenta de Bioeconomía.
 
 ```{r}
-csb_ECU <- read.csv(
-  "~/GitHub/cta-bioeconomia-ECU/data/legacy-bio-scn/csb-ECU.csv",
-  na.strings="-")
+#| label: load-dataset
+load("outputs/csb_ECU_factor.RData")
+
 ```
 
+Y probamos hacer un resumen para una actividad económica en particular.
 
 ```{r}
+#| label: tbl-utilizacion-bio
 
-test <- csb_ECU |> 
+test <- csb.ECU |> 
   filter(Año == 2019
          & Valor > 0
          & Cuadro == "Utilización" 
@@ -48,3 +51,27 @@ test |>
 
 ```
 
+Aquí también hacemos un cuadro dinámico para mostrar la cuenta de bioeconomía.
+
+```{r}
+#| label: tbl-csb-ecuador-compacta
+
+for_pivot <- as.data.frame(csb.ECU) |> 
+  filter(Año == 2019)
+
+library(pivottabler)
+
+pt <- PivotTable$new()
+pt$addData(for_pivot)
+pt$addColumnDataGroups("Área.transaccional.columnas.No.")
+pt$addColumnDataGroups("Área.transaccional", addTotal=FALSE)
+# pt$addColumnDataGroups("CIIU.Secciones", addTotal=FALSE)
+# pt$addColumnDataGroups("CIIU.Corto", addTotal=FALSE)
+pt$addRowDataGroups("No..Cuadro", addTotal=FALSE)
+pt$addRowDataGroups("Cuadro")
+pt$addRowDataGroups("Bioeconomía.Productos", totalCaption="Bioeconomía", addTotal=FALSE)
+pt$sortColumnDataGroups(levelNumber=2, orderBy="value")
+pt$sortRowDataGroups(levelNumber = 2, orderBy = "value")
+pt$defineCalculation(calculationName="Gran Total", summariseExpression="sum(Valor, na.rm=TRUE)", format=list(digits=1, nsmall=1, big.mark=",", decimal.mark=".", scientific=FALSE))
+pt$renderPivot()
+```
