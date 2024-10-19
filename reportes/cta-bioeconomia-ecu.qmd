@@ -37,6 +37,7 @@ abstract: >
   productos bioeconómicos se obtuvo entre 20.19 % y 33.62 % de la recaudación 
   de impuestos a los productos durante el periodo analizado.
 format:
+  
   html:
     toc: true
     number-sections: true
@@ -51,7 +52,6 @@ format:
   #   toc: true
   #   number-sections: true
   #   colorlinks: true
-  
 keywords:
   - Bioeconomía
   - Economía
@@ -65,6 +65,8 @@ citation:
   language: es
 appendix-cite-as: display
 funding: "Este trabajo ha sido financiado por FIAS."
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r}
@@ -96,23 +98,27 @@ En esta sección se introduce el concepto de bioeconomía en función de los acu
 
 ## Metodología
 
-En esta sección se hará referencia a los pasos seguidos para construir la cuenta de bioeconomía de Ecuador. Se hará énfasis en cómo se ha hecho un emparejamiento entre las clasificaciones internacionales de actividades económicas y de productos y 
+En esta sección se hará referencia a los pasos seguidos para construir la cuenta de bioeconomía de Ecuador. Se hará énfasis en cómo se ha hecho un emparejamiento entre las clasificaciones internacionales de actividades económicas y de productos y
 
 ## Resultados
 
 En esta sección se hará referencia a los hallazgos con una narrativa alrededor de:
 
-- El cuadro de oferta 2019.
-- El cuadro de utilización 2019.
+-   El cuadro de oferta y utilización bioeconómica 2019.
+
+::: {#tbl-ecu19-of-y-ut}
+![](images/clipboard-4126976839.png)
+
+Ecuador: Cuadros de oferta y utilización bioeconómica
+(Miles de dólares, 2019)
+:::
 
 ::: {html-table-processing="none"}
-
 ```{r}
 #| warning: false
 #| message: false 
 #| echo: false
-#| label: tbl-csb-ecuador-compacta
-#| tbl-cap: Cuenta de Bioeconomía de Ecuador (Millones de dólares, año 2019)
+#| eval: false
 
 for_pivot <- as.data.frame(csb.ECU) |> 
   filter(Año == 2019)
@@ -133,23 +139,98 @@ pt$sortRowDataGroups(levelNumber = 2, orderBy = "value")
 pt$defineCalculation(calculationName="Gran Total", summariseExpression="sum(Valor, na.rm=TRUE)", format=list(digits=1, nsmall=1, big.mark=",", decimal.mark=".", scientific=FALSE))
 pt$renderPivot()
 ```
-
 :::
 
-- Evolución de la bioeconomía 2007-2019.
-- Exportaciones.
-- Importaciones.
-- Impuestos sobre los productos.
-- Tasa impositiva implícita.
-- Ranking de actividades bioeconómicas vía consumo intermedio.
-- Ranking de actividades bioeconómicas vía multiplicadores de insumos de la bioeconomía.
-- Profundización en sectores seleccionados basado en lo anterior.
+-   Evolución de la bioeconomía 2007-2019.
+
+-   Exportaciones.
+-   Importaciones.
+-   Impuestos sobre los productos.
+-   Tasa impositiva implícita.
+-   Ranking de actividades bioeconómicas vía consumo intermedio.
+-   Ranking de actividades bioeconómicas vía multiplicadores de insumos de la bioeconomía.
+-   Profundización en sectores seleccionados basado en lo anterior. Por ejemplo.
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false 
+#| label: fig-csb-ecuador-compacta
+#| fig-cap: Importancia de los insumos bioeconómicos para actividades seleccionadas (porcentaje, 2019)
+
+#=2
+
+# test <- csb.ECU |> 
+#   filter(Año == 2019
+#          & Valor > 0
+#          & Cuadro == "Utilización" 
+#          & Área.transaccional == "Producción / Consumo intermedio"
+#          # & Descripción.Actividades == "Construcción"
+#          ) |>
+#   group_by(Bioeconomía.Productos) |> 
+#   summarize(Valor = sum(Valor, na.rm = T)) |>
+#   arrange(Bioeconomía.Productos, desc(Valor)) |> 
+#   ungroup()
+# 
+# test$Porcentaje <- (test$Valor / sum(test$Valor))* 100
+
+# test |> 
+#   gt()
+
+test2 <- csb.ECU |> 
+    filter(Año == 2019
+         & Valor > 0
+         & Cuadro == "Utilización" 
+         & Área.transaccional == "Producción / Consumo intermedio"
+         # Actividades de interés
+         & Código.Clasificación.Actividades %in% 
+           c("011001","025002", "034001", "036002","031001","021001")
+         # & Descripción.Actividades == "Construcción"
+         ) |> 
+  select(Descripción.Actividades,Bioeconomía.Productos, Valor) |> 
+  group_by(Descripción.Actividades, Bioeconomía.Productos) |> 
+  summarize(Valor = sum(Valor, na.rm = T)) |>
+  mutate(Pct = Valor* 100 / sum(Valor),
+         Pct_label = paste0(sprintf("%.2f", Pct),"%") )|> 
+  rename(Actividades = Descripción.Actividades,
+         Insumos = Bioeconomía.Productos,
+         Valor = Valor) |> 
+  ungroup()
+
+test3 <- test2[test2$Insumos == "Bioeconomía",] |> 
+  arrange(desc(Pct))
+
+test2$Actividades <- factor(test2$Actividades, levels = test3$Actividades)
+test2$Insumos <- fct_relevel(test2$Insumos, "No bioeconomía", "Bioeconomía extendida", "Bioeconomía" )
+
+ggplot(
+  test2, 
+  aes(
+    x = Actividades,
+    y = Valor,
+    fill = Insumos)) +
+  geom_bar(
+    stat = "identity",
+    position="fill") +
+  geom_text(aes(label =paste0(sprintf("%1.1f", Pct),"%")),
+            position = position_fill(vjust = 0.5), colour= "black", size = 3)+
+  ylab("Porcentaje")+
+  xlab("Actividades económicas") +
+  labs(fill = "Insumos") +
+  # theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
+  scale_x_discrete(
+    labels =
+      c("Carne", "Servicio de \nalimentos", "Muebles", "Textiles", "Construcción",
+        "Químicos"   ))
+
+```
 
 ## Conclusiones
+
+
 
 Atar los hallazgos de la cuenta de bioeconomía de Ecuador a los esfuerzos de la Estrategia Nacional y los hallazgos del libro Blanco.
 
 ## Referencias
 
 Referencias bibliográficas.
-

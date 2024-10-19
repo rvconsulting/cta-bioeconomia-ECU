@@ -1,5 +1,29 @@
 [
   {
+    "objectID": "suplementarios/mem-cta-bioeconomia-ecu.html",
+    "href": "suplementarios/mem-cta-bioeconomia-ecu.html",
+    "title": "Memoria de cálculo",
+    "section": "",
+    "text": "Primero llamamos las librerías necesarias.\n\nlibrary(tidyverse)\nlibrary(gt)\nlibrary(pivottabler)\n# library(duckdb)\n\nSeguidamente, importamos los datos de la cuenta de Bioeconomía.\n\nload(\"outputs/csb_ECU_factor.RData\")\n\nY probamos hacer un resumen para una actividad económica en particular.\n\ntest &lt;- csb.ECU |&gt; \n  filter(Año == 2019\n         & Valor &gt; 0\n         & Cuadro == \"Utilización\" \n         & Área.transaccional == \"Producción / Consumo intermedio\"\n         # & Descripción.Actividades == \"Fabricación de sustancias químicas básicas, abonos y plásticos primarios\"\n         ) |&gt;\n  group_by(Bioeconomía.Productos) |&gt; \n  summarize(Valor = sum(Valor, na.rm = T)) |&gt;\n  arrange(Bioeconomía.Productos, desc(Valor)) |&gt; \n  ungroup()\n\ntest$Porcentaje &lt;- (test$Valor / sum(test$Valor))* 100\n\ntest |&gt; \n  gt()\n\n\n\n\n\n\n\nBioeconomía.Productos\nValor\nPorcentaje\n\n\n\n\nBioeconomía\n17810906\n22.96705\n\n\nBioeconomía extendida\n5932763\n7.65026\n\n\nNo bioeconomía\n53806152\n69.38269\n\n\n\n\n\n\n\nAquí también hacemos un cuadro dinámico para mostrar la cuenta de bioeconomía.\n\nfor_pivot &lt;- as.data.frame(csb.ECU) |&gt; \n  filter(Año == 2019)\n\nlibrary(pivottabler)\n\npt &lt;- PivotTable$new()\npt$addData(for_pivot)\npt$addColumnDataGroups(\"Área.transaccional.columnas.No.\")\npt$addColumnDataGroups(\"Área.transaccional\", addTotal=FALSE)\n# pt$addColumnDataGroups(\"CIIU.Secciones\", addTotal=FALSE)\n# pt$addColumnDataGroups(\"CIIU.Corto\", addTotal=FALSE)\npt$addRowDataGroups(\"No..Cuadro\", addTotal=FALSE)\npt$addRowDataGroups(\"Cuadro\")\npt$addRowDataGroups(\"Bioeconomía.Productos\", totalCaption=\"Bioeconomía\", addTotal=FALSE)\npt$sortColumnDataGroups(levelNumber=2, orderBy=\"value\")\npt$sortRowDataGroups(levelNumber = 2, orderBy = \"value\")\npt$defineCalculation(calculationName=\"Gran Total\", summariseExpression=\"sum(Valor, na.rm=TRUE)\", format=list(digits=1, nsmall=1, big.mark=\",\", decimal.mark=\".\", scientific=FALSE))\npt$renderPivot()\n\n\n\nTabla 1",
+    "crumbs": [
+      "Home",
+      "Material Suplementario",
+      "Memoria de cálculo"
+    ]
+  },
+  {
+    "objectID": "suplementarios/mem-cta-bioeconomia-ecu.html#datos",
+    "href": "suplementarios/mem-cta-bioeconomia-ecu.html#datos",
+    "title": "Memoria de cálculo",
+    "section": "",
+    "text": "Primero llamamos las librerías necesarias.\n\nlibrary(tidyverse)\nlibrary(gt)\nlibrary(pivottabler)\n# library(duckdb)\n\nSeguidamente, importamos los datos de la cuenta de Bioeconomía.\n\nload(\"outputs/csb_ECU_factor.RData\")\n\nY probamos hacer un resumen para una actividad económica en particular.\n\ntest &lt;- csb.ECU |&gt; \n  filter(Año == 2019\n         & Valor &gt; 0\n         & Cuadro == \"Utilización\" \n         & Área.transaccional == \"Producción / Consumo intermedio\"\n         # & Descripción.Actividades == \"Fabricación de sustancias químicas básicas, abonos y plásticos primarios\"\n         ) |&gt;\n  group_by(Bioeconomía.Productos) |&gt; \n  summarize(Valor = sum(Valor, na.rm = T)) |&gt;\n  arrange(Bioeconomía.Productos, desc(Valor)) |&gt; \n  ungroup()\n\ntest$Porcentaje &lt;- (test$Valor / sum(test$Valor))* 100\n\ntest |&gt; \n  gt()\n\n\n\n\n\n\n\nBioeconomía.Productos\nValor\nPorcentaje\n\n\n\n\nBioeconomía\n17810906\n22.96705\n\n\nBioeconomía extendida\n5932763\n7.65026\n\n\nNo bioeconomía\n53806152\n69.38269\n\n\n\n\n\n\n\nAquí también hacemos un cuadro dinámico para mostrar la cuenta de bioeconomía.\n\nfor_pivot &lt;- as.data.frame(csb.ECU) |&gt; \n  filter(Año == 2019)\n\nlibrary(pivottabler)\n\npt &lt;- PivotTable$new()\npt$addData(for_pivot)\npt$addColumnDataGroups(\"Área.transaccional.columnas.No.\")\npt$addColumnDataGroups(\"Área.transaccional\", addTotal=FALSE)\n# pt$addColumnDataGroups(\"CIIU.Secciones\", addTotal=FALSE)\n# pt$addColumnDataGroups(\"CIIU.Corto\", addTotal=FALSE)\npt$addRowDataGroups(\"No..Cuadro\", addTotal=FALSE)\npt$addRowDataGroups(\"Cuadro\")\npt$addRowDataGroups(\"Bioeconomía.Productos\", totalCaption=\"Bioeconomía\", addTotal=FALSE)\npt$sortColumnDataGroups(levelNumber=2, orderBy=\"value\")\npt$sortRowDataGroups(levelNumber = 2, orderBy = \"value\")\npt$defineCalculation(calculationName=\"Gran Total\", summariseExpression=\"sum(Valor, na.rm=TRUE)\", format=list(digits=1, nsmall=1, big.mark=\",\", decimal.mark=\".\", scientific=FALSE))\npt$renderPivot()\n\n\n\nTabla 1",
+    "crumbs": [
+      "Home",
+      "Material Suplementario",
+      "Memoria de cálculo"
+    ]
+  },
+  {
     "objectID": "index.html",
     "href": "index.html",
     "title": "Cuenta Satélite de Bioeconomía de Ecuador",
@@ -14,11 +38,35 @@
     "text": "Este sitio está construido para el informe final de la Cuenta Satélite de Bioeconomía de Ecuador."
   },
   {
+    "objectID": "reportes/cta-bioeconomia-ecu.html",
+    "href": "reportes/cta-bioeconomia-ecu.html",
+    "title": "Cuenta Satélite de Bioeconomía de Ecuador",
+    "section": "",
+    "text": "En esta sección se introduce el concepto de bioeconomía en función de los acuerdos internacionales y la Estrategia Nacional de Bioeconomía de Ecuador.",
+    "crumbs": [
+      "Home",
+      "Reportes",
+      "Cuenta Satélite de Bioeconomía de Ecuador"
+    ]
+  },
+  {
+    "objectID": "reportes/cta-bioeconomia-ecu.html#introducción",
+    "href": "reportes/cta-bioeconomia-ecu.html#introducción",
+    "title": "Cuenta Satélite de Bioeconomía de Ecuador",
+    "section": "",
+    "text": "En esta sección se introduce el concepto de bioeconomía en función de los acuerdos internacionales y la Estrategia Nacional de Bioeconomía de Ecuador.",
+    "crumbs": [
+      "Home",
+      "Reportes",
+      "Cuenta Satélite de Bioeconomía de Ecuador"
+    ]
+  },
+  {
     "objectID": "reportes/cta-bioeconomia-ecu.html#metodología",
     "href": "reportes/cta-bioeconomia-ecu.html#metodología",
     "title": "Cuenta Satélite de Bioeconomía de Ecuador",
     "section": "2 Metodología",
-    "text": "2 Metodología",
+    "text": "2 Metodología\nEn esta sección se hará referencia a los pasos seguidos para construir la cuenta de bioeconomía de Ecuador. Se hará énfasis en cómo se ha hecho un emparejamiento entre las clasificaciones internacionales de actividades económicas y de productos y",
     "crumbs": [
       "Home",
       "Reportes",
@@ -30,7 +78,7 @@
     "href": "reportes/cta-bioeconomia-ecu.html#resultados",
     "title": "Cuenta Satélite de Bioeconomía de Ecuador",
     "section": "3 Resultados",
-    "text": "3 Resultados",
+    "text": "3 Resultados\nEn esta sección se hará referencia a los hallazgos con una narrativa alrededor de:\n\nEl cuadro de oferta y utilización bioeconómica 2019.\n\n\n\n\nTabla 1: Ecuador: Cuadros de oferta y utilización bioeconómica (Miles de dólares, 2019)\n\n\n\n\n\n\n\nEvolución de la bioeconomía 2007-2019.\nExportaciones.\nImportaciones.\nImpuestos sobre los productos.\nTasa impositiva implícita.\nRanking de actividades bioeconómicas vía consumo intermedio.\nRanking de actividades bioeconómicas vía multiplicadores de insumos de la bioeconomía.\nProfundización en sectores seleccionados basado en lo anterior. Por ejemplo.\n\n\n\n\n\n\n\n\n\nFigura 1: Importancia de los insumos bioeconómicos para actividades seleccionadas (porcentaje, 2019)",
     "crumbs": [
       "Home",
       "Reportes",
@@ -42,7 +90,7 @@
     "href": "reportes/cta-bioeconomia-ecu.html#conclusiones",
     "title": "Cuenta Satélite de Bioeconomía de Ecuador",
     "section": "4 Conclusiones",
-    "text": "4 Conclusiones",
+    "text": "4 Conclusiones\nAtar los hallazgos de la cuenta de bioeconomía de Ecuador a los esfuerzos de la Estrategia Nacional y los hallazgos del libro Blanco.",
     "crumbs": [
       "Home",
       "Reportes",
@@ -54,7 +102,7 @@
     "href": "reportes/cta-bioeconomia-ecu.html#referencias",
     "title": "Cuenta Satélite de Bioeconomía de Ecuador",
     "section": "5 Referencias",
-    "text": "5 Referencias",
+    "text": "5 Referencias\nReferencias bibliográficas.",
     "crumbs": [
       "Home",
       "Reportes",

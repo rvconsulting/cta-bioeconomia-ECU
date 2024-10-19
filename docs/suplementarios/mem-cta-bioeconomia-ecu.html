@@ -21,6 +21,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -66,6 +100,8 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Buscar"
   }
 }</script>
+<script src="../site_libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+<script src="../site_libs/pivottabler-binding-1.5.5/pivottabler.js"></script>
 
 
 <link rel="stylesheet" href="../styles.css">
@@ -167,7 +203,13 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">En esta página</h2>
+   
+  <ul>
+  <li><a href="#datos" id="toc-datos" class="nav-link active" data-scroll-target="#datos">Datos</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/rvconsulting/cta-bioeconomia-ECU/blob/master/suplementarios/mem-cta-bioeconomia-ecu.qmd" class="toc-action"><i class="bi bi-github"></i>Ver el código</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -197,8 +239,555 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<section id="datos" class="level2">
+<h2 class="anchored" data-anchor-id="datos">Datos</h2>
+<p>Primero llamamos las librerías necesarias.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gt)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pivottabler)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># library(duckdb)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Seguidamente, importamos los datos de la cuenta de Bioeconomía.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">"outputs/csb_ECU_factor.RData"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Y probamos hacer un resumen para una actividad económica en particular.</p>
+<div id="tbl-utilizacion-bio" class="cell anchored">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>test <span class="ot">&lt;-</span> csb.ECU <span class="sc">|&gt;</span> </span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Año <span class="sc">==</span> <span class="dv">2019</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>         <span class="sc">&amp;</span> Valor <span class="sc">&gt;</span> <span class="dv">0</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>         <span class="sc">&amp;</span> Cuadro <span class="sc">==</span> <span class="st">"Utilización"</span> </span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>         <span class="sc">&amp;</span> Área.transaccional <span class="sc">==</span> <span class="st">"Producción / Consumo intermedio"</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>         <span class="co"># &amp; Descripción.Actividades == "Fabricación de sustancias químicas básicas, abonos y plásticos primarios"</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>         ) <span class="sc">|&gt;</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Bioeconomía.Productos) <span class="sc">|&gt;</span> </span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">Valor =</span> <span class="fu">sum</span>(Valor, <span class="at">na.rm =</span> T)) <span class="sc">|&gt;</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(Bioeconomía.Productos, <span class="fu">desc</span>(Valor)) <span class="sc">|&gt;</span> </span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>test<span class="sc">$</span>Porcentaje <span class="ot">&lt;-</span> (test<span class="sc">$</span>Valor <span class="sc">/</span> <span class="fu">sum</span>(test<span class="sc">$</span>Valor))<span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>test <span class="sc">|&gt;</span> </span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="krmwbbktpb" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#krmwbbktpb table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#krmwbbktpb thead, #krmwbbktpb tbody, #krmwbbktpb tfoot, #krmwbbktpb tr, #krmwbbktpb td, #krmwbbktpb th {
+  border-style: none;
+}
+
+#krmwbbktpb p {
+  margin: 0;
+  padding: 0;
+}
+
+#krmwbbktpb .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#krmwbbktpb .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#krmwbbktpb .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#krmwbbktpb .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#krmwbbktpb .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#krmwbbktpb .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#krmwbbktpb .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#krmwbbktpb .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#krmwbbktpb .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#krmwbbktpb .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#krmwbbktpb .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#krmwbbktpb .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#krmwbbktpb .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#krmwbbktpb .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#krmwbbktpb .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#krmwbbktpb .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#krmwbbktpb .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#krmwbbktpb .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#krmwbbktpb .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#krmwbbktpb .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#krmwbbktpb .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#krmwbbktpb .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#krmwbbktpb .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#krmwbbktpb .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#krmwbbktpb .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#krmwbbktpb .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#krmwbbktpb .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#krmwbbktpb .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#krmwbbktpb .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#krmwbbktpb .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#krmwbbktpb .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#krmwbbktpb .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#krmwbbktpb .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#krmwbbktpb .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#krmwbbktpb .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#krmwbbktpb .gt_left {
+  text-align: left;
+}
+
+#krmwbbktpb .gt_center {
+  text-align: center;
+}
+
+#krmwbbktpb .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#krmwbbktpb .gt_font_normal {
+  font-weight: normal;
+}
+
+#krmwbbktpb .gt_font_bold {
+  font-weight: bold;
+}
+
+#krmwbbktpb .gt_font_italic {
+  font-style: italic;
+}
+
+#krmwbbktpb .gt_super {
+  font-size: 65%;
+}
+
+#krmwbbktpb .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#krmwbbktpb .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#krmwbbktpb .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#krmwbbktpb .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#krmwbbktpb .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#krmwbbktpb .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#krmwbbktpb .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#krmwbbktpb .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#krmwbbktpb div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<thead>
+<tr class="header gt_col_headings">
+<th id="Bioeconomía.Productos" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col">Bioeconomía.Productos</th>
+<th id="Valor" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Valor</th>
+<th id="Porcentaje" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Porcentaje</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_center" headers="Bioeconomía.Productos">Bioeconomía</td>
+<td class="gt_row gt_right" headers="Valor">17810906</td>
+<td class="gt_row gt_right" headers="Porcentaje">22.96705</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="Bioeconomía.Productos">Bioeconomía extendida</td>
+<td class="gt_row gt_right" headers="Valor">5932763</td>
+<td class="gt_row gt_right" headers="Porcentaje">7.65026</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="Bioeconomía.Productos">No bioeconomía</td>
+<td class="gt_row gt_right" headers="Valor">53806152</td>
+<td class="gt_row gt_right" headers="Porcentaje">69.38269</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p>Aquí también hacemos un cuadro dinámico para mostrar la cuenta de bioeconomía.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>for_pivot <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(csb.ECU) <span class="sc">|&gt;</span> </span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Año <span class="sc">==</span> <span class="dv">2019</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pivottabler)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>pt <span class="ot">&lt;-</span> PivotTable<span class="sc">$</span><span class="fu">new</span>()</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>pt<span class="sc">$</span><span class="fu">addData</span>(for_pivot)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>pt<span class="sc">$</span><span class="fu">addColumnDataGroups</span>(<span class="st">"Área.transaccional.columnas.No."</span>)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>pt<span class="sc">$</span><span class="fu">addColumnDataGroups</span>(<span class="st">"Área.transaccional"</span>, <span class="at">addTotal=</span><span class="cn">FALSE</span>)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co"># pt$addColumnDataGroups("CIIU.Secciones", addTotal=FALSE)</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co"># pt$addColumnDataGroups("CIIU.Corto", addTotal=FALSE)</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>pt<span class="sc">$</span><span class="fu">addRowDataGroups</span>(<span class="st">"No..Cuadro"</span>, <span class="at">addTotal=</span><span class="cn">FALSE</span>)</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>pt<span class="sc">$</span><span class="fu">addRowDataGroups</span>(<span class="st">"Cuadro"</span>)</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>pt<span class="sc">$</span><span class="fu">addRowDataGroups</span>(<span class="st">"Bioeconomía.Productos"</span>, <span class="at">totalCaption=</span><span class="st">"Bioeconomía"</span>, <span class="at">addTotal=</span><span class="cn">FALSE</span>)</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>pt<span class="sc">$</span><span class="fu">sortColumnDataGroups</span>(<span class="at">levelNumber=</span><span class="dv">2</span>, <span class="at">orderBy=</span><span class="st">"value"</span>)</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>pt<span class="sc">$</span><span class="fu">sortRowDataGroups</span>(<span class="at">levelNumber =</span> <span class="dv">2</span>, <span class="at">orderBy =</span> <span class="st">"value"</span>)</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>pt<span class="sc">$</span><span class="fu">defineCalculation</span>(<span class="at">calculationName=</span><span class="st">"Gran Total"</span>, <span class="at">summariseExpression=</span><span class="st">"sum(Valor, na.rm=TRUE)"</span>, <span class="at">format=</span><span class="fu">list</span>(<span class="at">digits=</span><span class="dv">1</span>, <span class="at">nsmall=</span><span class="dv">1</span>, <span class="at">big.mark=</span><span class="st">","</span>, <span class="at">decimal.mark=</span><span class="st">"."</span>, <span class="at">scientific=</span><span class="cn">FALSE</span>))</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>pt<span class="sc">$</span><span class="fu">renderPivot</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="tbl-csb-ecuador-compacta" class="cell quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl quarto-uncaptioned" id="tbl-csb-ecuador-compacta-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla&nbsp;1
+</figcaption>
+<div aria-describedby="tbl-csb-ecuador-compacta-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<div id="htmlwidget-787ceb08ab6650612d18" style="width:auto;height:auto;" class="pivottabler html-widget"></div>
+<script type="application/json" data-for="htmlwidget-787ceb08ab6650612d18">{"x":{"tableCss":".Table {display: table; border-collapse: collapse; }\r\n.ColumnHeader {font-family: Arial; font-size: 0.75em; border: 1px solid lightgray; vertical-align: middle; font-weight: bold; background-color: #F2F2F2; padding: 2px; text-align: center; }\r\n.RowHeader {font-family: Arial; font-size: 0.75em; border: 1px solid lightgray; vertical-align: middle; font-weight: bold; background-color: #F2F2F2; padding: 2px 8px 2px 2px; text-align: left; }\r\n.Cell {font-family: Arial; font-size: 0.75em; padding: 2px 2px 2px 8px; border: 1px solid lightgray; vertical-align: middle; text-align: right; }\r\n.OutlineColumnHeader {font-family: Arial; font-size: 0.75em; border: 1px solid lightgray; vertical-align: middle; font-weight: bold; background-color: #F2F2F2; padding: 2px; text-align: center; }\r\n.OutlineRowHeader {font-family: Arial; font-size: 0.75em; border: 1px solid lightgray; vertical-align: middle; font-weight: bold; background-color: #F2F2F2; padding: 2px 8px 2px 2px; text-align: left; }\r\n.OutlineCell {font-family: Arial; font-size: 0.75em; padding: 2px 2px 2px 8px; border: 1px solid lightgray; vertical-align: middle; text-align: right; background-color: #F8F8F8; font-weight: bold; }\r\n.Total {font-family: Arial; font-size: 0.75em; padding: 2px 2px 2px 8px; border: 1px solid lightgray; vertical-align: middle; text-align: right; }\r\n","tableHtml":"<table class=\"Table\">\n  <tr>\n    <th class=\"RowHeader\" rowspan=\"2\" colspan=\"3\">&nbsp;<\/th>\n    <th class=\"ColumnHeader\">ATC01<\/th>\n    <th class=\"ColumnHeader\">ATC02<\/th>\n    <th class=\"ColumnHeader\">ATC03<\/th>\n    <th class=\"ColumnHeader\">ATC04<\/th>\n    <th class=\"ColumnHeader\">ATC05<\/th>\n    <th class=\"ColumnHeader\" colspan=\"2\">ATC06<\/th>\n    <th class=\"ColumnHeader\">ATC07<\/th>\n    <th class=\"ColumnHeader\">NA<\/th>\n    <th class=\"ColumnHeader\">Total<\/th>\n  <\/tr>\n  <tr>\n    <th class=\"ColumnHeader\">Producción / Consumo intermedio<\/th>\n    <th class=\"ColumnHeader\">Exportaciones / Importaciones<\/th>\n    <th class=\"ColumnHeader\">Ajuste CIF/FOB<\/th>\n    <th class=\"ColumnHeader\">Impuestos menos subvenciones sobre los productos<\/th>\n    <th class=\"ColumnHeader\">Márgenes de distribución<\/th>\n    <th class=\"ColumnHeader\">Gasto de consumo final<\/th>\n    <th class=\"ColumnHeader\">Consumo final<\/th>\n    <th class=\"ColumnHeader\">Consumo final<\/th>\n    <th class=\"ColumnHeader\">NA<\/th>\n    <th class=\"ColumnHeader\">&nbsp;<\/th>\n  <\/tr>\n  <tr>\n    <th class=\"RowHeader\" rowspan=\"5\">1<\/th>\n    <th class=\"RowHeader\" rowspan=\"4\">Oferta<\/th>\n    <th class=\"RowHeader\">Bioeconomía<\/th>\n    <td class=\"Cell\">37,439,408<\/td>\n    <td class=\"Cell\">2,643,492<\/td>\n    <td class=\"Cell\">0<\/td>\n    <td class=\"Cell\">1,414,206<\/td>\n    <td class=\"Cell\">7,863,069<\/td>\n    <td class=\"Cell\"><\/td>\n    <td class=\"Cell\"><\/td>\n    <td class=\"Cell\"><\/td>\n    <td class=\"Cell\"><\/td>\n    <td class=\"Total\">49,360,175<\/td>\n  <\/tr>\n  <tr>\n    <th class=\"RowHeader\">Bioeconomía extendida<\/th>\n    <td class=\"Cell\">16,884,582<\/td>\n    <td class=\"Cell\">3,179,226<\/td>\n    <td class=\"Cell\">0<\/td>\n    <td class=\"Cell\">1,087,151<\/td>\n    <td class=\"Cell\">1,758,956<\/td>\n    <td class=\"Cell\"><\/td>\n    <td class=\"Cell\"><\/td>\n    <td class=\"Cell\"><\/td>\n    <td class=\"Cell\"><\/td>\n    <td class=\"Total\">22,909,915<\/td>\n  <\/tr>\n  <tr>\n    <th class=\"RowHeader\">No bioeconomía<\/th>\n    <td class=\"Cell\">124,097,408<\/td>\n    <td class=\"Cell\">20,162,978<\/td>\n    <td class=\"Cell\">-1,090,093<\/td>\n    <td class=\"Cell\">4,735,075<\/td>\n    <td class=\"Cell\">-9,622,025<\/td>\n    <td class=\"Cell\"><\/td>\n    <td class=\"Cell\"><\/td>\n    <td class=\"Cell\"><\/td>\n    <td class=\"Cell\"><\/td>\n    <td class=\"Total\">138,283,343<\/td>\n  <\/tr>\n  <tr>\n    <th class=\"RowHeader\">NA<\/th>\n    <td class=\"Cell\">0<\/td>\n    <td class=\"Cell\">-1,090,093<\/td>\n    <td class=\"Cell\">1,090,093<\/td>\n    <td class=\"Cell\">0<\/td>\n    <td class=\"Cell\">0<\/td>\n    <td class=\"Cell\"><\/td>\n    <td class=\"Cell\"><\/td>\n    <td class=\"Cell\"><\/td>\n    <td class=\"Cell\"><\/td>\n    <td class=\"Total\">0<\/td>\n  <\/tr>\n  <tr>\n    <th class=\"RowHeader\">Total<\/th>\n    <th class=\"RowHeader\">&nbsp;<\/th>\n    <td class=\"Total\">178,421,398<\/td>\n    <td class=\"Total\">24,895,603<\/td>\n    <td class=\"Total\">0<\/td>\n    <td class=\"Total\">7,236,432<\/td>\n    <td class=\"Total\">0<\/td>\n    <td class=\"Total\"><\/td>\n    <td class=\"Total\"><\/td>\n    <td class=\"Total\"><\/td>\n    <td class=\"Total\"><\/td>\n    <td class=\"Total\">210,553,433<\/td>\n  <\/tr>\n  <tr>\n    <th class=\"RowHeader\" rowspan=\"5\">2<\/th>\n    <th class=\"RowHeader\" rowspan=\"4\">Utilización<\/th>\n    <th class=\"RowHeader\">Bioeconomía<\/th>\n    <td class=\"Cell\">17,810,906<\/td>\n    <td class=\"Cell\">12,134,399<\/td>\n    <td class=\"Cell\"><\/td>\n    <td class=\"Cell\">0<\/td>\n    <td class=\"Cell\"><\/td>\n    <td class=\"Cell\">17,831,846<\/td>\n    <td class=\"Cell\">0<\/td>\n    <td class=\"Cell\">1,583,024<\/td>\n    <td class=\"Cell\">0<\/td>\n    <td class=\"Total\">49,360,175<\/td>\n  <\/tr>\n  <tr>\n    <th class=\"RowHeader\">Bioeconomía extendida<\/th>\n    <td class=\"Cell\">5,932,763<\/td>\n    <td class=\"Cell\">343,578<\/td>\n    <td class=\"Cell\"><\/td>\n    <td class=\"Cell\">0<\/td>\n    <td class=\"Cell\"><\/td>\n    <td class=\"Cell\">9,242,364<\/td>\n    <td class=\"Cell\">0<\/td>\n    <td class=\"Cell\">7,391,210<\/td>\n    <td class=\"Cell\">0<\/td>\n    <td class=\"Total\">22,909,915<\/td>\n  <\/tr>\n  <tr>\n    <th class=\"RowHeader\">No bioeconomía<\/th>\n    <td class=\"Cell\">53,806,152<\/td>\n    <td class=\"Cell\">12,439,154<\/td>\n    <td class=\"Cell\"><\/td>\n    <td class=\"Cell\">0<\/td>\n    <td class=\"Cell\"><\/td>\n    <td class=\"Cell\">36,522,019<\/td>\n    <td class=\"Cell\">16,483,785<\/td>\n    <td class=\"Cell\">19,032,233<\/td>\n    <td class=\"Cell\">0<\/td>\n    <td class=\"Total\">138,283,343<\/td>\n  <\/tr>\n  <tr>\n    <th class=\"RowHeader\">NA<\/th>\n    <td class=\"Cell\">0<\/td>\n    <td class=\"Cell\">0<\/td>\n    <td class=\"Cell\"><\/td>\n    <td class=\"Cell\">0<\/td>\n    <td class=\"Cell\"><\/td>\n    <td class=\"Cell\">0<\/td>\n    <td class=\"Cell\">0<\/td>\n    <td class=\"Cell\">0<\/td>\n    <td class=\"Cell\">0<\/td>\n    <td class=\"Total\">0<\/td>\n  <\/tr>\n  <tr>\n    <th class=\"RowHeader\">Total<\/th>\n    <th class=\"RowHeader\">&nbsp;<\/th>\n    <td class=\"Total\">77,549,821<\/td>\n    <td class=\"Total\">24,917,131<\/td>\n    <td class=\"Total\"><\/td>\n    <td class=\"Total\">0<\/td>\n    <td class=\"Total\"><\/td>\n    <td class=\"Total\">63,596,229<\/td>\n    <td class=\"Total\">16,483,785<\/td>\n    <td class=\"Total\">28,006,467<\/td>\n    <td class=\"Total\">0<\/td>\n    <td class=\"Total\">210,553,433<\/td>\n  <\/tr>\n  <tr>\n    <th class=\"RowHeader\" rowspan=\"2\">3<\/th>\n    <th class=\"RowHeader\">Valor Agregado<\/th>\n    <th class=\"RowHeader\">NA<\/th>\n    <td class=\"Cell\">100,871,577<\/td>\n    <td class=\"Cell\"><\/td>\n    <td class=\"Cell\"><\/td>\n    <td class=\"Cell\"><\/td>\n    <td class=\"Cell\"><\/td>\n    <td class=\"Cell\"><\/td>\n    <td class=\"Cell\"><\/td>\n    <td class=\"Cell\"><\/td>\n    <td class=\"Cell\"><\/td>\n    <td class=\"Total\">100,871,577<\/td>\n  <\/tr>\n  <tr>\n    <th class=\"RowHeader\">Total<\/th>\n    <th class=\"RowHeader\">&nbsp;<\/th>\n    <td class=\"Total\">100,871,577<\/td>\n    <td class=\"Total\"><\/td>\n    <td class=\"Total\"><\/td>\n    <td class=\"Total\"><\/td>\n    <td class=\"Total\"><\/td>\n    <td class=\"Total\"><\/td>\n    <td class=\"Total\"><\/td>\n    <td class=\"Total\"><\/td>\n    <td class=\"Total\"><\/td>\n    <td class=\"Total\">100,871,577<\/td>\n  <\/tr>\n  <tr>\n    <th class=\"RowHeader\" rowspan=\"2\">4<\/th>\n    <th class=\"RowHeader\">Empleo<\/th>\n    <th class=\"RowHeader\">NA<\/th>\n    <td class=\"Cell\">7,707,922<\/td>\n    <td class=\"Cell\"><\/td>\n    <td class=\"Cell\"><\/td>\n    <td class=\"Cell\"><\/td>\n    <td class=\"Cell\"><\/td>\n    <td class=\"Cell\"><\/td>\n    <td class=\"Cell\"><\/td>\n    <td class=\"Cell\"><\/td>\n    <td class=\"Cell\"><\/td>\n    <td class=\"Total\">7,707,922<\/td>\n  <\/tr>\n  <tr>\n    <th class=\"RowHeader\">Total<\/th>\n    <th class=\"RowHeader\">&nbsp;<\/th>\n    <td class=\"Total\">7,707,922<\/td>\n    <td class=\"Total\"><\/td>\n    <td class=\"Total\"><\/td>\n    <td class=\"Total\"><\/td>\n    <td class=\"Total\"><\/td>\n    <td class=\"Total\"><\/td>\n    <td class=\"Total\"><\/td>\n    <td class=\"Total\"><\/td>\n    <td class=\"Total\"><\/td>\n    <td class=\"Total\">7,707,922<\/td>\n  <\/tr>\n<\/table>","settings":[]},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+</figure>
+</div>
+</div>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -593,4 +1182,4 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions"><ul><li><a href="https://github.com/rvconsulting/cta-bioeconomia-ECU/blob/master/suplementarios/mem-cta-bioeconomia-ecu.qmd" class="toc-action"><i class="bi bi-github"></i>Ver el código</a></li></ul></div></div></div></footer></body></html>
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/rvconsulting/cta-bioeconomia-ECU/blob/master/suplementarios/mem-cta-bioeconomia-ecu.qmd" class="toc-action"><i class="bi bi-github"></i>Ver el código</a></li></ul></div></div></div></footer></body></html>
