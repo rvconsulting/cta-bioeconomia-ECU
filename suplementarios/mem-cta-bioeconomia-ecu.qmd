@@ -37,7 +37,7 @@ test <- csb.ECU |>
          & Valor > 0
          & Cuadro == "Utilización" 
          & Área.transaccional == "Producción / Consumo intermedio"
-         # & Descripción.Actividades == "Fabricación de sustancias químicas básicas, abonos y plásticos primarios"
+         & Descripción.Actividades == "Fabricación de sustancias químicas básicas, abonos y plásticos primarios"
          ) |>
   group_by(Bioeconomía.Productos) |> 
   summarize(Valor = sum(Valor, na.rm = T)) |>
